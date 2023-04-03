@@ -34,8 +34,7 @@ jobs:
       - name: Run a multi-line script
         run: |
           echo Add other actions to build,
-          echo test, and deploy your project.
-          jobs:
+          echo test, and deploy your project.          
     # dump_contexts_to_log:    
     ##runs-on: self-hosted  
     ###steps:
