@@ -36,6 +36,9 @@ jobs:
           echo Add other actions to build,
           echo test, and deploy your project.
           'D:\Projects\PMHub\_buildndeploy\build.ps1'
+          # Runs a set of commands using the runners shell
+      - name: Build Application
+        run: 'D:\Projects\PMHub\_buildndeploy\build.ps1'
     # dump_contexts_to_log:    
     ##runs-on: self-hosted  
     ###steps:
