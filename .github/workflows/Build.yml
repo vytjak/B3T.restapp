@@ -19,7 +19,7 @@ jobs:
   build:
     name: "Build App"
     # The type of runner that the job will run on
-    runs-on: self-hosted
+    runs-on: self-hosted    
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
@@ -40,6 +40,7 @@ jobs:
         run: |
           Write-Host 'Running build script...';
           'D:\Projects\PMHub\_buildndeploy\build.ps1';
+        shell: pwsh
     # dump_contexts_to_log:    
     ##runs-on: self-hosted  
     ###steps:
