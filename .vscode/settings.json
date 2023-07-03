@@ -1,20 +1,18 @@
 {
+    "al.enableCodeAnalysis": true,
     "al.codeAnalyzers": [
         "${CodeCop}",
         "${UICop}",
         "${PerTenantExtensionCop}"
     ],
-    "al.enableCodeAnalysis": true,
-    "al.ruleSetPath": ".RuleSets/waldo.ruleset.json",
+    "al.ruleSetPath": ".RuleSets/wsapp.ruleset.json",
     "al.enableCodeActions": true,
     "CRS.FileNamePattern": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
     "CRS.FileNamePatternExtensions": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
     "CRS.FileNamePatternPageCustomizations": "<ObjectNameShort>.<ObjectTypeShortPascalCase>.al",
     "CRS.OnSaveAlFileAction": "Rename",
-    "CRS.RenameWithGit": true,
-    "CRS.ObjectNameSuffix": " WLD",
+    "CRS.RenameWithGit": false,
+    "CRS.ObjectNameSuffix": " B3T",
     //"CRS.RemoveSuffixFromFilename": true,
-    "editor.formatOnSave": true,
-    "rest-client.rememberCookiesForSubsequentRequests": false,
-    "alVarHelper.ignoreALSuffix": "WLD"
+    "editor.formatOnSave": true
 }

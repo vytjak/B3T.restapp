@@ -1,0 +1,26 @@
+{
+    "name": "waldo",
+    "description": "waldoRuleSet",
+    "rules": [
+        {
+            "id": "AW0006",
+            "action": "None",
+            "justification": "Should use the UseageCategory and AppArea"
+        },
+        {
+            "id": "AA0072",
+            "action": "None",
+            "justification": "We don't need to object type suffixes."
+        },
+        {
+            "id": "AA0005",
+            "action": "None",
+            "justification": "Parenthesis only on compound statements. This is counterproductive for code upgrade and additions."
+        },
+        {
+            "id": "AW0011",
+            "action": "None", 
+            "justification": "We don't care about all actions in group being promoted."
+        }        
+    ]
+}

@@ -1,6 +1,8 @@
-codeunit 79910 "JSONHelper WLD"
+codeunit 79910 "JSONHelper WLD B3T"
 {
-    Access = Public;
+    // #if defined #version 20plus
+    //     Access = Public;
+    // #endif
 
     var
         JsonObjectVar: JsonObject;

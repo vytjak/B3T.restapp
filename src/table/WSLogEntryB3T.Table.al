@@ -1,7 +1,9 @@
-table 79911 "REST Log WLD"
+table 79911 "WS Log Entry B3T"
 {
-    Access = Public;
-    DataClassification = ToBeClassified;
+    // #if defined #version 20plus
+    // Access = Public;
+    // #endif
+    DataClassification = SystemMetadata;
 
     fields
     {
@@ -11,51 +13,51 @@ table 79911 "REST Log WLD"
             AutoIncrement = true;
         }
 
-        field(2; RequestUrl; Text[250])
+        field(2; "Request URL"; Text[250])
         {
-            Caption = 'RequestUrl';
+            Caption = 'Request URL';
         }
-        field(3; RequestMethod; Code[10])
+        field(3; "Request Method"; Code[10])
         {
-            Caption = 'RequestMethod';
+            Caption = 'Request Method';
         }
-        field(4; RequestBody; Blob)
+        field(4; "Request Body"; Blob)
         {
-            Caption = 'RequestBody';
+            Caption = 'Request Body';
         }
-        field(5; RequestBodySize; BigInteger)
+        field(5; "Request Body Size"; BigInteger)
         {
-            Caption = 'RequestBodySize';
+            Caption = 'Request Body Size';
         }
-        field(6; ContentType; Text[50])
+        field(6; "Content Type"; Text[50])
         {
             Caption = 'Content Type';
         }
-        field(7; RequestHeaders; Text[1000])
+        field(7; "Request Headers"; Blob)
         {
-            Caption = 'Headers';
+            Caption = 'Request Headers';
         }
-        field(8; ResponseHttpStatusCode; Integer)
+        field(8; "Response Http Status Code"; Integer)
         {
-            Caption = 'ResponseHttpStatusCode';
+            Caption = 'Response Http Status Code';
         }
-        field(9; Response; Blob)
+        field(9; "Response Body"; Blob)
         {
-            Caption = 'Response';
+            Caption = 'Response Body';
         }
-        field(10; ResponseSize; BigInteger)
+        field(10; "Response Size"; BigInteger)
         {
-            Caption = 'ResponseSize';
+            Caption = 'Response Size';
         }
-        field(11; DateTimeCreated; DateTime)
+        field(11; "DateTime Created"; DateTime)
         {
             Caption = 'Date Time Created';
         }
-        field(12; Duraction; Duration)
+        field(12; "Duration"; Duration)
         {
-            Caption = 'Duraction';
+            Caption = 'Duration';
         }
-        field(20; User; Text[50])
+        field(20; User; Code[50])
         {
             Caption = 'User';
             DataClassification = EndUserIdentifiableInformation;
@@ -84,5 +86,4 @@ table 79911 "REST Log WLD"
     begin
         ShowResponseMessageMeth.ShowResponseMessage(Rec);
     end;
-
 }

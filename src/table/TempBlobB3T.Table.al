@@ -1,6 +1,8 @@
-table 79910 "REST Blob WLD"
+table 79913 "TempBlob B3T"
 {
-    Access = Internal;
+    // #if defined #version 20plus
+    // Access = Public;
+    // #endif
 
     fields
     {
