@@ -19,36 +19,44 @@ page 79911 "WS Log Entries B3T"
                 field("Entry No."; Rec."Entry No.")
                 {
                     Tooltip = 'Specifies the Entry No.';
+
                     ApplicationArea = All;
                 }
                 field("Request Method"; Rec."Request Method")
                 {
                     Tooltip = 'Specifies the Request Method';
+
                     ApplicationArea = All;
                 }
                 field("Request URL"; Rec."Request URL")
                 {
                     Tooltip = 'Specifies the Request URL';
+
                     ApplicationArea = All;
                 }
                 field("Content Type"; Rec."Content Type")
                 {
                     Tooltip = 'Specifies the ContentType';
+
                     ApplicationArea = All;
                 }
                 field("DateTime Created"; Rec."DateTime Created")
                 {
                     Tooltip = 'Specifies the DateTime Created';
+
                     ApplicationArea = All;
                 }
                 field("Duration"; Rec."Duration")
                 {
                     Tooltip = 'Specifies the Duration';
+
                     ApplicationArea = All;
                 }
                 field("Request Body Size"; Rec."Request Body Size")
                 {
+                    BlankZero = true;
                     Tooltip = 'Specifies the Request Body Size';
+
                     ApplicationArea = All;
                 }
                 //TODO: 
@@ -59,20 +67,30 @@ page 79911 "WS Log Entries B3T"
                 // }
                 field("Response Http Status Code"; Rec."Response Http Status Code")
                 {
+                    BlankZero = true;
                     Tooltip = 'Specifies the Response Http Status Code';
+
+                    ApplicationArea = All;
+                }
+                field(Description; Rec.Description)
+                {
+                    ToolTip = 'HTTP status or error description.';
+
                     ApplicationArea = All;
                 }
                 field("Response Size"; Rec."Response Size")
                 {
+                    BlankZero = true;
                     Tooltip = 'Specifies the Response Size';
+
                     ApplicationArea = All;
                 }
                 field(User; User)
                 {
                     Tooltip = 'Specifies the User';
+
                     ApplicationArea = All;
                 }
-
             }
         }
     }
@@ -87,6 +105,7 @@ page 79911 "WS Log Entries B3T"
                 Image = ExportFile;
                 Tooltip = 'Downloads request headers';
                 Promoted = true;
+                PromotedCategory = Process;
 
                 ApplicationArea = All;
 
@@ -101,6 +120,7 @@ page 79911 "WS Log Entries B3T"
                 Image = ExportFile;
                 Tooltip = 'Downloads request body, if present.';
                 Promoted = true;
+                PromotedCategory = Process;
 
                 ApplicationArea = All;
 
@@ -116,6 +136,7 @@ page 79911 "WS Log Entries B3T"
                 Image = ExportFile;
                 Tooltip = 'Downloads response body, if present.';
                 Promoted = true;
+                PromotedCategory = Process;
 
                 ApplicationArea = All;
 
@@ -133,10 +154,11 @@ page 79911 "WS Log Entries B3T"
                 Caption = 'Show Request Message';
                 Scope = "Repeater";
                 Promoted = true;
+                PromotedCategory = Process;
 
                 trigger OnAction()
                 begin
-                    ShowRequestMessage();
+                    WSLogMan.ShowRequestMessage(Rec);
                 end;
             }
             action(ShowResponseMessage)
@@ -147,10 +169,11 @@ page 79911 "WS Log Entries B3T"
                 Caption = 'Show Response Message';
                 Scope = "Repeater";
                 Promoted = true;
+                PromotedCategory = Process;
 
                 trigger OnAction()
                 begin
-                    ShowResponseMessage();
+                    WSLogMan.ShowResponseMessage(Rec);
                 end;
             }
         }

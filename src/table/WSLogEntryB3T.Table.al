@@ -57,6 +57,10 @@ table 79911 "WS Log Entry B3T"
         {
             Caption = 'Duration';
         }
+        field(13; Description; Text[250])
+        {
+            Caption = 'Description';
+        }
         field(20; User; Code[50])
         {
             Caption = 'User';
@@ -73,17 +77,4 @@ table 79911 "WS Log Entry B3T"
         }
     }
 
-    procedure ShowRequestMessage()
-    var
-        ShowRequestMessageMeth: Codeunit "ShowRequestMessage Meth WLD";
-    begin
-        ShowRequestMessageMeth.ShowRequestMessage(Rec);
-    end;
-
-    procedure ShowResponseMessage()
-    var
-        ShowResponseMessageMeth: Codeunit "ShowResponseMessage Meth WLD";
-    begin
-        ShowResponseMessageMeth.ShowResponseMessage(Rec);
-    end;
 }

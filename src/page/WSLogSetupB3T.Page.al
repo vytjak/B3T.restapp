@@ -1,5 +1,5 @@
 page 79910 "WS Log Setup B3T"
-{    
+{
     PageType = Card;
     SourceTable = "WS Log Setup B3T";
     Caption = 'WS Log Setup';
@@ -7,14 +7,24 @@ page 79910 "WS Log Setup B3T"
     DeleteAllowed = false;
     UsageCategory = Administration;
 
-    
     layout
     {
         area(content)
         {
             group(General)
             {
-                //You might want to add fields here
+                field("Log Level"; Rec."Log Level")
+                {
+                    ToolTip = 'Log Level';
+
+                    ApplicationArea = All;
+                }
+                field("Log Asynchronously"; Rec."Log Asynchronously")
+                {
+                    ToolTip = 'Log Asynchronously';
+
+                    ApplicationArea = All;
+                }
             }
         }
     }
@@ -23,5 +33,4 @@ page 79910 "WS Log Setup B3T"
     begin
         Rec.InsertIfNotExists();
     end;
-    
 }

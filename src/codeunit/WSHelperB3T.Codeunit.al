@@ -1,20 +1,16 @@
 codeunit 79911 "WS Helper B3T"
 {
-    // #if defined #version 20plus
-    // Access = Public;
-    // #endif
-    //TODO: Build in RequestCatcher.com functionality so that it's easy to analyze requests that come from Business Central
-
     var
         WebClient: HttpClient;
         WebRequest: HttpRequestMessage;
         WebResponse: HttpResponseMessage;
         WebRequestHeaders: HttpHeaders;
         WebContentHeaders: HttpHeaders;
-        WebContent: HttpContent;
+        WebContentReq: HttpContent;
         CurrentContentType: Text;
-        RestHeaders: TextBuilder;
+        RequestHeaders: TextBuilder;
         ContentTypeSet: Boolean;
+        SendSuccess: Boolean;
 
     procedure Initialize(Method: Text; URI: Text);
     begin
@@ -22,18 +18,19 @@ codeunit 79911 "WS Helper B3T"
         WebRequest.SetRequestUri(URI);
 
         WebRequest.GetHeaders(WebRequestHeaders);
+        SendSuccess := false;
     end;
 
     procedure AddRequestHeader(HeaderKey: Text; HeaderValue: Text)
     begin
-        RestHeaders.AppendLine(HeaderKey + ': ' + HeaderValue);
+        RequestHeaders.AppendLine(HeaderKey + ': ' + HeaderValue);
 
         WebRequestHeaders.Add(HeaderKey, HeaderValue);
     end;
 
     procedure AddBody(Body: Text)
     begin
-        WebContent.WriteFrom(Body);
+        WebContentReq.WriteFrom(Body);
 
         ContentTypeSet := true;
     end;
@@ -54,23 +51,24 @@ codeunit 79911 "WS Helper B3T"
     begin
         CurrentContentType := ContentType;
 
-        WebContent.GetHeaders(WebContentHeaders);
+        WebContentReq.GetHeaders(WebContentHeaders);
         if WebContentHeaders.Contains('Content-Type') then begin
             WebContentHeaders.Remove('Content-Type');
         end;
         WebContentHeaders.Add('Content-Type', ContentType);
     end;
 
-    procedure Send() SendSuccess: Boolean
+    procedure Send(): Boolean
     var
         StartDateTime: DateTime;
         TotalDuration: Duration;
     begin
-        if ContentTypeSet then
-            WebRequest.Content(WebContent);
-
-        OnBeforeSend(WebRequest, WebResponse);
+        if (ContentTypeSet) then begin
+            WebRequest.Content(WebContentReq);
+        end;
+        OnBeforeSend(WebRequest);
         StartDateTime := CurrentDateTime();
+        Clear(WebResponse);
         SendSuccess := WebClient.Send(WebRequest, WebResponse);
         TotalDuration := CurrentDateTime() - StartDateTime;
         OnAfterSend(WebRequest, WebResponse);
@@ -80,17 +78,17 @@ codeunit 79911 "WS Helper B3T"
                 SendSuccess := false;
             end;
         end;
+
         Log(StartDateTime, TotalDuration);
     end;
 
     procedure GetResponseContentAsText() ResponseContentText: Text
     var
-        RestBlob: Record "TempBlob B3T";
-        //ContentData: Codeunit "Temp BLOB";
-        Instr: Instream;
+        TempBlob: Record "TempBlob B3T";
+        InStr: InStream;
     begin
 
-        RESTBlob.Blob.CreateInStream(Instr);
+        TempBlob.Blob.CreateInStream(InStr);
         WebResponse.Content().ReadAs(ResponseContentText);
     end;
 
@@ -119,49 +117,64 @@ codeunit 79911 "WS Helper B3T"
     local procedure Log(StartDateTime: DateTime; TotalDuration: Duration)
     var
         WSLogEntry: Record "WS Log Entry B3T";
-        RestBlob: record "TempBlob B3T";
-        ResponseBlob: record "TempBlob B3T";
-        Instr: InStream;
-        ResponseInstr: InStream;
-        Outstr: OutStream;
+        InStr: InStream;
+        ResponseInStr: InStream;
+        OutStr: OutStream;
+        WebContentResp: HttpContent;
+        RespContentOk: Boolean;
     begin
-        RestBlob.BLOB.CreateInStream(Instr);
-        WebContent.ReadAs(Instr);
-
-        ResponseBlob.BLOB.CreateInStream(ResponseInstr);
-        WebResponse.Content().ReadAs(ResponseInstr);
-
         WSLogEntry.Init();
+        WSLogEntry."DateTime Created" := StartDateTime;
         WSLogEntry."Request URL" := CopyStr(WebRequest.GetRequestUri(), 1, MaxStrLen(WSLogEntry."Request URL"));
         WSLogEntry."Request Method" := CopyStr(WebRequest.Method, 1, MaxStrLen(WSLogEntry."Request Method"));
 
-        WSLogEntry."Request Body".CreateOutStream(Outstr);
-        CopyStream(Outstr, Instr);
-
+        WebContentReq.ReadAs(InStr);
+        WSLogEntry."Request Body".CreateOutStream(OutStr);
+        CopyStream(OutStr, InStr);
         WSLogEntry."Request Body Size" := WSLogEntry."Request Body".Length();
         WSLogEntry."Content Type" := CopyStr(CurrentContentType, 1, MaxStrLen(WSLogEntry."Content Type"));
-        //TODO!!! WSLogEntry."Request Headers" := CopyStr(RestHeaders.ToText(), 1, MaxStrLen(WSLogEntry."Request Headers"));
-        WSLogEntry."Response Http Status Code" := GetHttpStatusCode();
+        WSLogEntry."Request Headers".CreateOutStream(OutStr);
+        OutStr.Write(RequestHeaders.ToText());
 
-        WSLogEntry."Response Body".CreateOutStream(Outstr);
-        CopyStream(Outstr, ResponseInstr);
-        WSLogEntry."Response Size" := WSLogEntry."Response Body".Length();
-        WSLogEntry."DateTime Created" := StartDateTime;
+        if (SendSuccess) then begin
+            WSLogEntry."Response Http Status Code" := GetHttpStatusCode();
+        end;
+        WebContentResp := WebResponse.Content;
+        RespContentOk := WebContentResp.ReadAs(ResponseInStr);
+        if (RespContentOk) then begin
+            WSLogEntry."Response Body".CreateOutStream(OutStr);
+            CopyStream(OutStr, ResponseInStr);
+            WSLogEntry."Response Size" := WSLogEntry."Response Body".Length();
+        end;
 
         WSLogEntry.User := CopyStr(UserId(), 1, MaxStrLen(WSLogEntry.User));
 
         WSLogEntry.Duration := TotalDuration;
-        WSLogEntry.Insert();
+
+        //TODO: uncomment
+        //if (not WSLogSetup."Log Asynchronously") then begin
+        //    WSLogEntry.Insert();
+        //end else begin
+        LogEventAsync(WSLogEntry);
+        //end;
 
     end;
 
+    local procedure LogEventAsync(var LogEntry: Record "WS Log Entry B3T")
+    var
+        LogSessionID: Integer;
+    begin
+        StartSession(LogSessionID, CODEUNIT::"WS Log Management B3T", COMPANYNAME(), LogEntry);
+    end;
+
+
     [IntegrationEvent(true, false)]
-    local procedure OnBeforeSend(WebRequest: HttpRequestMessage; WebResponse: HttpResponseMessage)
+    local procedure OnBeforeSend(var WebRequest: HttpRequestMessage)
     begin
     end;
 
     [IntegrationEvent(true, false)]
-    local procedure OnAfterSend(WebRequest: HttpRequestMessage; WebResponse: HttpResponseMessage)
+    local procedure OnAfterSend(var WebRequest: HttpRequestMessage; var WebResponse: HttpResponseMessage)
     begin
     end;
 }

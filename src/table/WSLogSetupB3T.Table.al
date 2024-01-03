@@ -1,19 +1,19 @@
 table 79910 "WS Log Setup B3T"
 {
-    // #if defined #version 20plus
-    // Access = Public;
-    // #endif
     DataClassification = CustomerContent;
 
     fields
     {
         field(1; "Primary Key"; Code[10])
         {
-
         }
-
-        //You might want to add fields here
-
+        field(10; "Log Level"; enum "WS Log Level PMH.B3T")
+        {
+        }
+        field(20; "Log Asynchronously"; Boolean)
+        {
+            InitValue = true;
+        }
     }
 
     keys
