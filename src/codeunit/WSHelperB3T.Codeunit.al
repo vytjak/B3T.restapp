@@ -73,13 +73,8 @@ codeunit 79911 "WS Helper B3T"
         TotalDuration := CurrentDateTime() - StartDateTime;
         OnAfterSend(WebRequest, WebResponse);
 
-        if (SendSuccess) then begin
-            if (not WebResponse.IsSuccessStatusCode()) then begin
-                SendSuccess := false;
-            end;
-        end;
-
         Log(StartDateTime, TotalDuration);
+        exit(SendSuccess);
     end;
 
     procedure GetResponseContentAsText() ResponseContentText: Text
@@ -87,9 +82,41 @@ codeunit 79911 "WS Helper B3T"
         TempBlob: Record "TempBlob B3T";
         InStr: InStream;
     begin
-
         TempBlob.Blob.CreateInStream(InStr);
         WebResponse.Content().ReadAs(ResponseContentText);
+    end;
+
+    procedure GetResponseHeader(HeaderName: Text): Text;
+    var
+        HttpRespHeaders: HttpHeaders;
+        HeaderValues: array[10] of Text;
+        HeaderValue: Text;
+        ValueX: Text;
+        i0: integer;
+    begin
+        if (SendSuccess) then begin
+            HttpRespHeaders := WebResponse.Headers;
+            //#if #runtime is >= 8.0
+            if (HttpRespHeaders.GetValues(HeaderName, HeaderValues)) then begin
+                for i0 := 1 to 10 do begin
+                    ValueX := HeaderValues[i0];
+                    if (ValueX <> '') then begin
+                        if (HeaderValue <> '') then begin
+                            HeaderValue += ',';
+                        end;
+                        HeaderValue += ValueX;
+                    end;
+                end;
+            end;
+        end;
+        exit(HeaderValue);
+    end;
+
+    procedure GetResponseHeaders(): HttpHeaders;
+    begin
+        if (SendSuccess) then begin
+            exit(WebResponse.Headers);
+        end;
     end;
 
     procedure GetResponseReasonPhrase(): Text
@@ -116,6 +143,7 @@ codeunit 79911 "WS Helper B3T"
 
     local procedure Log(StartDateTime: DateTime; TotalDuration: Duration)
     var
+        WSLogSetup: Record "WS Log Setup B3T";
         WSLogEntry: Record "WS Log Entry B3T";
         InStr: InStream;
         ResponseInStr: InStream;
@@ -123,6 +151,9 @@ codeunit 79911 "WS Helper B3T"
         WebContentResp: HttpContent;
         RespContentOk: Boolean;
     begin
+        if (not WSLogSetup.Get()) then begin
+            WSLogSetup.Init();
+        end;
         WSLogEntry.Init();
         WSLogEntry."DateTime Created" := StartDateTime;
         WSLogEntry."Request URL" := CopyStr(WebRequest.GetRequestUri(), 1, MaxStrLen(WSLogEntry."Request URL"));
@@ -151,13 +182,11 @@ codeunit 79911 "WS Helper B3T"
 
         WSLogEntry.Duration := TotalDuration;
 
-        //TODO: uncomment
-        //if (not WSLogSetup."Log Asynchronously") then begin
-        //    WSLogEntry.Insert();
-        //end else begin
-        LogEventAsync(WSLogEntry);
-        //end;
-
+        if (not WSLogSetup."Log Asynchronously") then begin
+            WSLogEntry.Insert();
+        end else begin
+            LogEventAsync(WSLogEntry);
+        end;
     end;
 
     local procedure LogEventAsync(var LogEntry: Record "WS Log Entry B3T")
