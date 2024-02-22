@@ -9,7 +9,7 @@ table 79910 "WS Log Setup B3T"
         }
         field(10; "Log Level"; enum "WS Log Level PMH.B3T")
         {
-            InitValue = 4; //Debug
+            InitValue = Debug;
         }
         field(20; "Log Asynchronously"; Boolean)
         {

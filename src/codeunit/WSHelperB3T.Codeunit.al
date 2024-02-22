@@ -14,6 +14,10 @@ codeunit 79911 "WS Helper B3T"
 
     procedure Initialize(Method: Text; URI: Text);
     begin
+        Clear(WebRequest);
+        Clear(WebRequestHeaders);
+        Clear(WebContentHeaders);
+
         WebRequest.Method := Method;
         WebRequest.SetRequestUri(URI);
 
