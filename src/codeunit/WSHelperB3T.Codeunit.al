@@ -56,10 +56,19 @@ codeunit 79911 "WS Helper B3T"
         CurrentContentType := ContentType;
 
         WebContentReq.GetHeaders(WebContentHeaders);
-        if WebContentHeaders.Contains('Content-Type') then begin
+        if (WebContentHeaders.Contains('Content-Type')) then begin
             WebContentHeaders.Remove('Content-Type');
         end;
         WebContentHeaders.Add('Content-Type', ContentType);
+    end;
+
+    procedure SetAccept(Accept: Text)
+    begin
+        WebContentReq.GetHeaders(WebContentHeaders);
+        if (WebContentHeaders.Contains('Accept')) then begin
+            WebContentHeaders.Remove('Accept');
+        end;
+        WebContentHeaders.Add('Accept', Accept);
     end;
 
     procedure Send(): Boolean
