@@ -64,11 +64,11 @@ codeunit 79911 "WS Helper B3T"
 
     procedure SetAccept(Accept: Text)
     begin
-        WebContentReq.GetHeaders(WebContentHeaders);
-        if (WebContentHeaders.Contains('Accept')) then begin
-            WebContentHeaders.Remove('Accept');
+        WebRequest.GetHeaders(WebRequestHeaders);
+        if (WebRequestHeaders.Contains('Accept')) then begin
+            WebRequestHeaders.Remove('Accept');
         end;
-        WebContentHeaders.Add('Accept', Accept);
+        WebRequestHeaders.Add('Accept', Accept);
     end;
 
     procedure Send(): Boolean
@@ -178,8 +178,8 @@ codeunit 79911 "WS Helper B3T"
         WSLogEntry."Request Body Size" := WSLogEntry."Request Body".Length();
         WSLogEntry."Content Type" := CopyStr(CurrentContentType, 1, MaxStrLen(WSLogEntry."Content Type"));
         WSLogEntry."Request Headers".CreateOutStream(OutStr);
-        OutStr.Write(RequestHeaders.ToText());
-
+        OutStr.Write(Format(WebRequestHeaders));
+        OutStr.Write(Format(WebContentHeaders));
         if (SendSuccess) then begin
             WSLogEntry."Response Http Status Code" := GetHttpStatusCode();
         end;

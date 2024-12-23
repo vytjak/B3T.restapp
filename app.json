@@ -2,7 +2,7 @@
   "id": "ed8b3346-606b-4f87-99cc-b38c2ac80ea2",
   "name": "WS Helper App",
   "publisher": "B3 Technologies",
-  "version": "0.2.2410.0",
+  "version": "0.4.0.0",
   "brief": "Web Service integration helper app for Microsoft Dynamics NAV/365 BC.",
   "description": "This is a non end-user app that is utilised to simplify integrations using web services.",
   "privacyStatement": "",
